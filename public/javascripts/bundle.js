@@ -18883,14 +18883,18 @@ var createPopper = /*#__PURE__*/(0,_createPopper_js__WEBPACK_IMPORTED_MODULE_4__
 "use strict";
 
 
-function parseCandidateNames(candidates) {
+var util = {};
+util.parseCandidateNames = function (candidates) {
   return candidates.trim().split('\n').map(function (s) {
     return s.trim();
   }).filter(function (s) {
     return s !== "";
   });
-}
-module.exports = parseCandidateNames;
+};
+util.doConfirm = function (str) {
+  return window.confirm(str);
+};
+module.exports = util;
 
 /***/ })
 /******/ 	]);
@@ -18969,14 +18973,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
-/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(61);
-/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_util__WEBPACK_IMPORTED_MODULE_2__);
 
 
 
 globalThis.jQuery = (jquery__WEBPACK_IMPORTED_MODULE_0___default());
 
-
+var _require = __webpack_require__(61),
+  parseCandidateNames = _require.parseCandidateNames,
+  doConfirm = _require.doConfirm;
 jquery__WEBPACK_IMPORTED_MODULE_0___default()('.availability-toggle-button').each(function (i, e) {
   var button = jquery__WEBPACK_IMPORTED_MODULE_0___default()(e);
   button.on('click', function () {
@@ -19010,10 +19014,12 @@ buttonSelfComment.on('click', function () {
     });
   }
 });
-jquery__WEBPACK_IMPORTED_MODULE_0___default()('#new-schedule-button').on('click', function () {
-  var candidateNames = _util__WEBPACK_IMPORTED_MODULE_2___default()(jquery__WEBPACK_IMPORTED_MODULE_0___default()('#candidates').val());
+
+// $('#new-schedule-button').on('click', () => {
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '#new-schedule-button', function () {
+  var candidateNames = parseCandidateNames(jquery__WEBPACK_IMPORTED_MODULE_0___default()('#candidates').val());
   if (candidateNames.length === 0) {
-    var confirmation = confirm('候補日程が指定されていません。続けますか？');
+    var confirmation = doConfirm('候補日程が指定されていません。続けますか？');
     return confirmation; // falseを返すとクリックのデフォルト挙動とイベント伝播を防ぐ
   }
 });

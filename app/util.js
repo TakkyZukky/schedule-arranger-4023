@@ -1,7 +1,13 @@
 'use strict';
 
-function parseCandidateNames(candidates) {
+const util = {};
+
+util.parseCandidateNames = candidates => {
   return candidates.trim().split('\n').map((s) => s.trim()).filter((s) => s !== "");
 }
 
-module.exports = parseCandidateNames;
+util.doConfirm = str => {
+  return window.confirm(str);
+}
+
+module.exports = util;

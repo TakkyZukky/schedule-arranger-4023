@@ -9,7 +9,7 @@ const User = require('../models/user');
 const Availability = require('../models/availability');
 const Comment = require('../models/comment');
 const csrf = require('csurf');
-const parseCandidateNames = require('../app/util');
+const { parseCandidateNames } = require('../app/util');
 const csrfProtection = csrf({ cookie: true });
 
 router.get('/new', authenticationEnsurer, csrfProtection, (req, res, next) => {

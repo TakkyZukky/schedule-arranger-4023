@@ -2,7 +2,7 @@
 import $ from 'jquery';
 globalThis.jQuery = $;
 import bootstrap from 'bootstrap';
-import parseCandidateNames from './util';
+const { parseCandidateNames, doConfirm } = require('./util');
 
 $('.availability-toggle-button').each((i, e) => {
   const button = $(e);
@@ -40,10 +40,11 @@ buttonSelfComment.on('click', () => {
   }
 });
 
-$('#new-schedule-button').on('click', () => {
+// $('#new-schedule-button').on('click', () => {
+$(document).on('click', '#new-schedule-button', () => {
   const candidateNames = parseCandidateNames($('#candidates').val());
   if (candidateNames.length === 0) {
-    const confirmation = confirm('候補日程が指定されていません。続けますか？');
+    const confirmation = doConfirm('候補日程が指定されていません。続けますか？');
     return confirmation; // falseを返すとクリックのデフォルト挙動とイベント伝播を防ぐ
   }
 });

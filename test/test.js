@@ -8,6 +8,8 @@ const Candidate = require('../models/candidate');
 const Availability = require('../models/availability');
 const Comment = require('../models/comment');
 const deleteScheduleAggregate = require('../routes/schedules').deleteScheduleAggregate;
+const util = require('../app/util');
+const { userEvent } = require('@testing-library/user-event');
 
 describe('/login', () => {
   beforeAll(() => {
@@ -84,6 +86,61 @@ describe('/schedules', () => {
       .expect(/テスト候補3/)
       .expect(200)
   });
+});
+
+describe('/schedules/new', () => {
+
+  // let scheduleId = '';
+  let confirmSpy;
+  beforeAll(() => {
+    passportStub.install(app);
+    passportStub.login({ id: 0, username: 'testuser' });
+    // window.confirm = jest.fn();
+    // window.confirm = jest.fn(() => true);
+    // window.confirm = jest.fn().mockImplementation(() => true);
+    // global.confirm = jest.fn();
+    // global.confirm = jest.fn(() => true);
+    // global.confirm = jest.fn().mockImplementation(() => true);
+    // confirmSpy = jest.spyOn(window, 'confirm');
+    confirmSpy = jest.spyOn(util, 'doConfirm');
+    confirmSpy.mockImplementation(() => true);
+  });
+
+  afterAll(async () => {
+    passportStub.logout();
+    passportStub.uninstall();
+    // await deleteScheduleAggregate(scheduleId);
+    confirmSpy.mockRestore();
+  });
+
+  test('候補日程なしで予定を作成するとアラートが出る', async () => {
+
+    await User.upsert({ userId: 0, username: 'testuser' });
+    // const { csrfToken, cookies, } = await getCsrfTokenPair();
+    const res = await request(app)
+      .get('/schedules/new')
+      // .expect('Location', '/schedules/new') // Locationヘッダーはリダイレクト時にしかない
+      .expect(200)
+    ;
+
+    // document = new DOMParser().parseFromString(res.text, 'text/html');
+    ///// html要素の属性やそれより上層のDoctypeには対応できていない
+    document.documentElement.innerHTML = res.text.match(/<head.+<\/body>/)[0];
+    // console.log(document.documentElement.outerHTML);
+    document.getElementById('scheduleName').value = 'テスト予定 - 候補日なし';
+    document.getElementById('memo').value = 'テストメモ - 候補日なし';
+
+    ///// "Error: Not implemented: HTMLFormElement.prototype.submit" を回避
+    ///// https://github.com/jsdom/jsdom/issues/1937#issuecomment-448219414
+    // document.getElementById('new-schedule-button').dispatchEvent(new Event('click'));
+    document.querySelector('form').addEventListener('submit', evt => evt.preventDefault());
+    // document.getElementById('new-schedule-button').click();
+    const userInteraction = userEvent.setup();
+    await userInteraction.click(document.getElementById('new-schedule-button'));
+    expect(confirmSpy).toBeCalledTimes(1);
+
+  });
+
 });
 
 describe('/schedules/:scheduleId/users/:userId/candidates/:candidateId', () => {

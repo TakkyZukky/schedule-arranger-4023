@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "jest --testTimeout=10000 --forceExit"
+    "test": "jest --testTimeout=10000 --forceExit --env=jsdom"
   },
   "dependencies": {
     "@popperjs/core": "2.11.2",
@@ -30,6 +30,8 @@
   "devDependencies": {
     "@babel/core": "7.17.5",
     "@babel/preset-env": "7.16.11",
+    "@testing-library/dom": "^9.3.3",
+    "@testing-library/user-event": "^14.5.1",
     "babel-loader": "8.2.3",
     "jest": "27.5.1",
     "passport-stub": "1.1.1",
